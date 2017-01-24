@@ -32,6 +32,14 @@ var ErrInvalidTopicEmptyString = errors.New("Invalid Topic; empty string")
 //the last
 var ErrInvalidTopicMultilevel = errors.New("Invalid Topic; multi-level wildcard must be last level")
 
+//InvalidTopicUtf8 is the error returned when a topic string
+//is not a valid UTF-8 string
+var ErrInvalidTopicUtf8 = errors.New("Invalid Topic; topic name must be a valid UTF-8 string")
+
+//InvalidTopicWildcardChars is the error returned when a topic string
+//contains wildcard characters
+var ErrInvalidTopicWildcardChars = errors.New("Invalid Topic; topic name must not use wildcard characters")
+
 // Topic Names and Topic Filters
 // The MQTT v3.1.1 spec clarifies a number of ambiguities with regard
 // to the validity of Topic strings.

@@ -21,8 +21,10 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strings"
 	"sync"
 	"time"
+	"unicode/utf8"
 
 	"github.com/contactless/org.eclipse.paho.mqtt.golang/packets"
 )
@@ -473,9 +475,19 @@ func (c *Client) Publish(topic string, qos byte, retained bool, payload interfac
 	case c.connectionStatus() == reconnecting && qos == 0:
 		token.flowComplete()
 		return token
+	case len(topic) == 0:
+		token.err = ErrInvalidTopicEmptyString
+		return token
+	case !utf8.ValidString(topic):
+		token.err = ErrInvalidTopicUtf8
+		return token
+	case strings.ContainsAny(topic, "#+"):
+		token.err = ErrInvalidTopicWildcardChars
+		return token
 	}
 	pub := packets.NewControlPacket(packets.Publish).(*packets.PublishPacket)
 	pub.Qos = qos
+
 	pub.TopicName = []byte(topic)
 	pub.Retain = retained
 	switch payload.(type) {
