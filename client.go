@@ -477,12 +477,15 @@ func (c *Client) Publish(topic string, qos byte, retained bool, payload interfac
 		return token
 	case len(topic) == 0:
 		token.err = ErrInvalidTopicEmptyString
+		token.flowComplete()
 		return token
 	case !utf8.ValidString(topic):
 		token.err = ErrInvalidTopicUtf8
+		token.flowComplete()
 		return token
 	case strings.ContainsAny(topic, "#+"):
 		token.err = ErrInvalidTopicWildcardChars
+		token.flowComplete()
 		return token
 	}
 	pub := packets.NewControlPacket(packets.Publish).(*packets.PublishPacket)
